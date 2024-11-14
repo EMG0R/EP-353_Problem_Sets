@@ -1,0 +1,3 @@
+# PROBLEM SET 4
+## Emory Smith
+sheeeeshh this took so long so much failure but I think it should be done correctly and I learned a lot. I created a sticky note with the stuff i have to paste into terminal a lot which helped, once I got the hang of cmake stuff it was not even hard just getting used to the juce/cmake format took forever. I'm  very happy i fully understand it now I can't wait to work on my own audio stuff. This honestly felt like using the latin equivalent to Csound HAH

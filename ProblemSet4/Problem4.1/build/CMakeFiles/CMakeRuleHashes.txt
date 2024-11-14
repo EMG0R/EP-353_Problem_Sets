@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+37c94c8c02eb5da443c5c2bfbead1ee9 ProblemSet4_artefacts/JuceLibraryCode/JuceHeader.h
