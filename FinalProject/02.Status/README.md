@@ -1,27 +1,14 @@
 # Status Report
 
-#### Your name
+#### Emory Smith
 
-TODO
-
-#### Project title
-
-TODO
+#### Ambient generative synthesis/fx processing with JUCE for Raspberry Pi
 
 ***
 
-Short answers for the below questions suffice. If you want to alter your plan for your project (and obtain approval for the same), be sure to email your instructor!
 
-<p style="font-size: 16px; color:red;"><b>IMPORTANT:</b> You cannot change your project after the status report due date/time.</p>
+#### I got more obsessed with C than I ever have before working on this. I have replicated my original system for generative fm synthesis from Csound across to C++ almost exactly with few hurdles. Gaining serious appreciation and understanding for the syntax of JUCE by comparing to Csound.
 
-#### What have you done for your project so far?
+#### I have not gotten any cmake or JUCE stuff to work on the pi despite hours of trying
 
-TODO
-
-#### What have you not done for your project yet?
-
-TODO
-
-#### What problems, if any, have you encountered?
-
-TODO
+#### I know I'm getting close to getting the pi to run but I think I need a bigger SD card. I will bring it to office hour to discuss becasue I am losing my mind working on this.
