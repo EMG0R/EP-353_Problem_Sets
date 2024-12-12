@@ -35,14 +35,14 @@ public:
             // Add F# (54) if note is F (53) with a 20% chance
             if (note == 53 && juce::Random::getSystemRandom().nextFloat() < 0.2f)
             {
-                float sharpWeight = juce::Random::getSystemRandom().nextFloat() * 5.0f; // Reduced weight for sharp
+                float sharpWeight = juce::Random::getSystemRandom().nextFloat() * 5.0f; 
                 weightedNotes.emplace_back(54, sharpWeight);
             }
 
             // Add G# (56) if note is G (55) with a 20% chance
             if (note == 55 && juce::Random::getSystemRandom().nextFloat() < 0.2f)
             {
-                float sharpWeight = juce::Random::getSystemRandom().nextFloat() * 5.0f; // Reduced weight for sharp
+                float sharpWeight = juce::Random::getSystemRandom().nextFloat() * 5.0f; 
                 weightedNotes.emplace_back(56, sharpWeight);
             }
         }
@@ -57,7 +57,6 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
 {
     currentSampleRate = sampleRate;
 
-
     // ADSR ranges
     float minAttack = 1.5f;
     float maxAttack = 4.0f;
@@ -66,7 +65,7 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
 
     for (int i = 0; i < numVoices; ++i)
     {
-        // Randomize envelope ADSR
+        // randomize envelope ADSR
         adsrParams.attack = juce::Random::getSystemRandom().nextFloat() * (maxAttack - minAttack) + minAttack;
         adsrParams.decay = juce::Random::getSystemRandom().nextFloat() * (maxDecayRelease - minDecayRelease) + minDecayRelease;
         adsrParams.sustain = 0.0f;
@@ -76,7 +75,7 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
         adsrs[i].setParameters(adsrParams);        // apply ADSR
         adsrs[i].reset();                          // reset 
 
-        // Randomize FM envelope ADSR
+        // randomize FM ADSR
         fmAdsrParams.attack = juce::Random::getSystemRandom().nextFloat() * (maxAttack - minAttack) + minAttack;
         fmAdsrParams.decay = juce::Random::getSystemRandom().nextFloat() * (maxDecayRelease - minDecayRelease) + minDecayRelease;
         fmAdsrParams.sustain = 0.0f;
@@ -86,6 +85,7 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
         fmAdsrs[i].setParameters(fmAdsrParams);      // apply FM ADSR
         fmAdsrs[i].reset();                          // Reset
 
+
         // initialize parameters for each voice
         phases[i] = 0.0;
         lfoPhases[i] = 0.0;
@@ -94,18 +94,18 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
         voiceActive[i] = false;
     }
 
-        // vibrato settings
+        // vibrato
         vibratoRate = 0.71;
         vibratoDepth = 2.2;
         vibratoIncrement = (2.0 * juce::MathConstants<double>::pi * vibratoRate) / currentSampleRate;
 
-        // initialize chorus parameters
+        // chorus
         chorusDelayBufferSize = static_cast<int>(currentSampleRate * 0.1); // 100ms max delay
         chorusDelayBuffer.setSize(2, chorusDelayBufferSize);
         chorusDelayBuffer.clear();
         chorusDelayBufferWritePosition = 0;
 
-        // chorus paramaters
+        // chorus
         chorusLfoRate = 0.11;
         chorusLfoDepth = 0.005f;
         chorusLfoPhase = 0.0;
@@ -113,7 +113,7 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
         chorusMix = 0.6f;
 
 
-        // flanger paramaters
+        // flanger
         flangerDelayBufferSize = static_cast<int>(currentSampleRate * 0.05); // 50ms max delay
         flangerDelayBuffer.setSize(2, flangerDelayBufferSize);
         flangerDelayBuffer.clear();
@@ -126,7 +126,7 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
         flangerMix = 0.01f;        
 
 
-        // phaser paramaters
+        // phaser
         phaserLfoRate = 0.19; 
         phaserLfoPhase = 0.0;
         phaserLfoIncrement = (2.0 * juce::MathConstants<double>::pi * phaserLfoRate) / currentSampleRate;
@@ -147,11 +147,13 @@ void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
             stage.buffer = 0.09f; //bufferr
         }
 
-    // Configure reverb parameters
+
+
+    // reverb 
     reverbParams.roomSize = 0.99f;    
     reverbParams.damping = 0.6f;  
-    reverbParams.wetLevel = 0.4f;   
-    reverbParams.dryLevel = 0.6f;   
+    reverbParams.wetLevel = 0.5f;   
+    reverbParams.dryLevel = 0.5f;   
     reverbParams.width = 1.0f;      
     reverbParams.freezeMode = 0.0f; 
     reverb.setParameters(reverbParams);
@@ -165,11 +167,11 @@ void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) overrid
     static int fadeInSamples = 120; // 120 sample fade-in 
     static int currentFadeInSample = 0;
 
-    // Retrieves writable pointers for left and right audio channels
+    // retrieves pointers for left and right audio channels
     auto* leftChannel = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
     auto* rightChannel = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
 
-    // Process each sample in the audio buffer
+    // process each sample in buffer
     for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
     {
         float drySample = 0.0f;
@@ -203,10 +205,10 @@ void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) overrid
             }
         }
 
-        // Normalize combined voices to prevent clipping
+        // normalize combined voices to prevent clipping
         drySample /= static_cast<float>(numVoices);
 
-        // Apply chorus/flanger/phaser
+        // apply chorus/flanger/phaser
         float chorusSampleL, chorusSampleR;
         applyChorus(drySample, chorusSampleL, chorusSampleR);
 
@@ -216,7 +218,7 @@ void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) overrid
         float phaserSampleL = applyPhaser(flangerSampleL);
         float phaserSampleR = applyPhaser(flangerSampleR);
 
-        // Fade-in logic
+        // fade-in 
         float fadeFactor = fadeInActive ? static_cast<float>(currentFadeInSample) / fadeInSamples : 1.0f;
         leftChannel[sample] = phaserSampleL * fadeFactor * masterGain;
         rightChannel[sample] = phaserSampleR * fadeFactor * masterGain;
@@ -230,7 +232,7 @@ void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) overrid
         }
     }
 
-    // Apply reverb to the final audio buffer
+    // apply reverb to the final audio buffer
     reverb.processStereo(leftChannel, rightChannel, bufferToFill.numSamples);
 }
 
@@ -246,14 +248,13 @@ private:
     double amplitude = 0.9;
     float bpm;
     float keyOffset;
-    float masterGain = 1.0f; // Adjust as needed to prevent clipping
+    float masterGain = 1.0f; // adjust as needed to prevent clipping
 
     // weights for note selection
     std::vector<std::pair<int, float>> weightedNotes;
 
     // voice allocation index
     int currentVoiceIndex;
-
 
 
 
@@ -264,7 +265,7 @@ private:
     // fm stuff
     juce::ADSR fmAdsrs[numVoices];               // FM ADSR emv pervoice
     juce::ADSR::Parameters fmAdsrParams;         // FM ADSR param
-    double fmMaxIndex = 3.0;                   // max FM modulation index 
+    double fmMaxIndex = 4.0;                   // max FM modulation index 
     int fmRatios[numVoices]; // random FM ratio for each voice (0 to 8)
     double modulatorPhases[numVoices]; // FM modulator phase for each voice
 
@@ -277,8 +278,6 @@ private:
     double frequencies[numVoices];
     double phaseIncrements[numVoices];
     bool   voiceActive[numVoices];
-
-        // phaser
     double phaserLfoRate = 0.3;       
     double phaserLfoPhase = 0.0;     
     double phaserLfoIncrement;       
@@ -331,14 +330,14 @@ private:
      
 
     juce::Reverb reverb;                 // JUCE Reverb object
-    juce::Reverb::Parameters reverbParams; // Reverb parameters
+    juce::Reverb::Parameters reverbParams; // reverb parameters
 
 
 
 // periodic event handler that triggers whenever the timer associated with the class fires
 void timerCallback() override
 {
-    if (juce::Random::getSystemRandom().nextFloat() < 0.32f) // trigger with 32% chance
+    if (juce::Random::getSystemRandom().nextFloat() < 1.0f) // trigger with 32% chance
     {
         int voiceIndex = currentVoiceIndex; // select the current voice
         currentVoiceIndex = (currentVoiceIndex + 1) % numVoices;
@@ -492,7 +491,6 @@ void timerCallback() override
     }
 
 // select note based on probability distribution
-// select note based on probability distribution
 int selectWeightedNoteIndex()
 {
     // calculate total weight of all notes
@@ -514,7 +512,7 @@ int selectWeightedNoteIndex()
         }
     }
 
-    // Default case, if no note is selected, return index of last note
+    // default case, if no note is selected, return index of last note
     return weightedNotes.size() - 1;
 }
 
